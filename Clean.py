@@ -1,26 +1,18 @@
 import re
-with open("news_sample.csv", "r", encoding="utf-8") as f:
-    data = f.readlines()
+import pandas as pd
 
-def clean_text(data_input):
-    # lowercase 
-    lines = [line.lower() for line in data_input]
-    # remove newline
-    lines = [re.sub(r"\n$", "", line) for line in lines]
-    # remove tabs
-    lines = [re.sub(r"\t", "", line) for line in lines]
-    # remove multiple whitespaces
-    lines = [re.sub(r"\s{2,}", " ", line) for line in lines]
-    # replace email
-    lines = [re.sub(r"[0-9a-zA-Z._%-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}", r"<EMAIL>", line) for line in lines]
-    # replace url starting with https or www
-    lines = [re.sub(r'(?:https?://|www\.)[^\s,"\']+', r"<URL>", line) for line in lines] 
-    # replace other url's ending in com, net or org 
-    lines = [re.sub(r"[0-9a-zA-Z]+\.(com|net|org)", r"<URL>", line) for line in lines]
-    # replace date
-    lines = [re.sub(r"[0-9]{4}-[0-9]{2}-[0-9]{2}", r"<DATE>", line) for line in lines]
-    # replace numbers
-    lines = [re.sub(r"[0-9]+", r"<NUM>", line) for line in lines]
-    return lines
-cleaned_data = clean_text(data)
-print(cleaned_data)
+df = pd.read_csv("news_sample.csv") # read CSV
+
+def clean_text(text):
+    cleaned_text = text.lower() # highercase -> lowercase
+    cleaned_text = re.sub(r"\s+", " ", cleaned_text) # line shift, several spaces and tab
+    cleaned_text = re.sub(r"\d[\d,\.]*", "<NUM>", cleaned_text) # any number
+    cleaned_text = re.sub(r"\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}(?:\.\d+)?", "<DATE>", cleaned_text) # date with time
+    cleaned_text = re.sub(r"\b\d{4}-\d{2}-\d{2}\b", "<DATE>", cleaned_text) # date
+    cleaned_text = re.sub(r"\S+@\S+", "<EMAIL>", cleaned_text)  # mail
+    cleaned_text = re.sub(r"(https?://\S+|www\.\S+)", "<URL>", cleaned_text)  # URL
+    cleaned_text = cleaned_text.strip()
+    return cleaned_text
+
+df["cleaned_text"] = df["content"].apply(clean_text) # clean specific column
+print(df["cleaned_text"]) # print all articles
