@@ -37,7 +37,7 @@ def stemming(tokens):
 def build_dictionary(token_lists):
     return set(token for row in token_lists for token in row)
 
-# pipeline of whole data preprocessing
+# pipeline of whole data preprocessing. stores intermediates
 def data_pipeline(df):
     df["cleaned_text"] = df["content"].apply(clean_text)
     df["tokenized_text"] = df["cleaned_text"].apply(tokenize)
@@ -47,6 +47,19 @@ def data_pipeline(df):
     df["stemmed_text"] = df["token_without_stopwords"].apply(stemming)
     return df
 
+# pipeline of whole data preprocessing. only stores fully processed data
+# should be faster when the tokenized but non stemmed data is not needed
+def data_pipeline_stemmed(df):
+    result = []
+
+    for text in df["content"].fillna(""):
+        cleaned = clean_text(text)
+        tokens = tokenize(cleaned)
+        tokens = remove_stopwords(tokens, stopwords)
+        stems = stemming(tokens)
+        result.append(stems)
+
+    return result
 
 # data processing of news_sample.csv
 def main():
