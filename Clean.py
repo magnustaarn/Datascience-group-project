@@ -14,7 +14,7 @@ def clean_text(text):
     cleaned_text = re.sub(r"\d[\d,\.\S*]*", "NUM_TOKEN", cleaned_text) # any number
     cleaned_text = re.sub(r"\S+@\S+", "EMAIL_TOKEN", cleaned_text)  # mail
     cleaned_text = re.sub(r"(https?://\S+|www\.\S+)", "URL_TOKEN", cleaned_text)  # URL
-    cleaned_text = re.sub(r"[.:,;\?=\+\-\*’\"\–\“\|]", "", cleaned_text)  # removes punctation
+    cleaned_text = re.sub(r"[.:,;\?=\+\-\*’\"\–\“\|\)\(\"\!\”\‘\$\—]", "", cleaned_text)  # removes punctation
     cleaned_text = re.sub(r"'s", "", cleaned_text)  # removes 's
     cleaned_text = cleaned_text.strip()
     return cleaned_text
@@ -42,7 +42,7 @@ def build_dictionary(token_lists):
 # plot of n most frequent words 
 def plot_most_frequent_words_from_dict(freqs, n_words=100):
     top_words = freqs.most_common(n_words) # only process top n words
-
+    print(top_words)
     words = [word for word, _ in top_words] # keep only words
     counts = [count for _, count in top_words] # keep only frequencies
 
