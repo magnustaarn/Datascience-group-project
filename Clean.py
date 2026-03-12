@@ -3,6 +3,7 @@ import pandas as pd
 from nltk.tokenize import word_tokenize
 from nltk.stem import SnowballStemmer
 from collections import Counter
+import matplotlib.pyplot as plt
 
 def clean_text(text):
     text = str(text)
@@ -34,9 +35,25 @@ stemmer = SnowballStemmer("english")
 def stemming(tokens):
     return [stemmer.stem(word) for word in tokens]
 
-# makes dictionary(set)
+# makes dictionary(with frequencies)
 def build_dictionary(token_lists):
     return Counter(token for row in token_lists for token in row)
+
+# plot of n most frequent words 
+def plot_most_frequent_words_from_dict(freqs, n_words=100):
+    top_words = freqs.most_common(n_words) # only process top n words
+
+    words = [word for word, _ in top_words] # keep only words
+    counts = [count for _, count in top_words] # keep only frequencies
+
+    plt.figure(figsize=(14, 6))
+    plt.bar(words, counts)
+    plt.xticks(rotation=90)
+    plt.xlabel("Words")
+    plt.ylabel("Frequency")
+    plt.title(f"Top {n_words} Most Frequent Words")
+    plt.tight_layout()
+    plt.show()
 
 # pipeline of whole data preprocessing. stores intermediates
 def data_pipeline(df):
@@ -71,6 +88,7 @@ def main():
     dictionary_tokenized = build_dictionary(df["token_without_stopwords"])
     dictionary_stemmed = build_dictionary(df["stemmed_text"])
     dictionary_non_tokenized = set(word for row in df["cleaned_text"] for word in row.split())
+    plot_most_frequent_words_from_dict(dictionary_tokenized)
 
     print("Dictionary size of tokenized and stopwords removed:", len(dictionary_tokenized))
     print("dictionary size of nontokenized and no stopword removal:", len(dictionary_non_tokenized))
@@ -78,7 +96,7 @@ def main():
     print("Dictionary size after stemming:", len(dictionary_stemmed))
     print("Reduction rate after stemming:",
         100 - (len(dictionary_stemmed) / len(dictionary_tokenized) * 100))
-    print(dictionary_tokenized)
+    
 
 # only runs main() if file ran directly (this file usable as module)
 if __name__ == "__main__":
