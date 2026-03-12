@@ -2,6 +2,7 @@ import re
 import pandas as pd
 from nltk.tokenize import word_tokenize
 from nltk.stem import SnowballStemmer
+from collections import Counter
 
 def clean_text(text):
     text = str(text)
@@ -35,7 +36,7 @@ def stemming(tokens):
 
 # makes dictionary(set)
 def build_dictionary(token_lists):
-    return set(token for row in token_lists for token in row)
+    return Counter(token for row in token_lists for token in row)
 
 # pipeline of whole data preprocessing. stores intermediates
 def data_pipeline(df):
@@ -77,6 +78,7 @@ def main():
     print("Dictionary size after stemming:", len(dictionary_stemmed))
     print("Reduction rate after stemming:",
         100 - (len(dictionary_stemmed) / len(dictionary_tokenized) * 100))
+    print(dictionary_tokenized)
 
 # only runs main() if file ran directly (this file usable as module)
 if __name__ == "__main__":
