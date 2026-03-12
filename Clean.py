@@ -39,10 +39,10 @@ def stemming(tokens):
 def build_dictionary(token_lists):
     return Counter(token for row in token_lists for token in row)
 
-# plot of n most frequent words 
+# plot of n most frequent words. Bar chart, only usable up to about 100 words
 def plot_most_frequent_words_from_dict(freqs, n_words=100):
     top_words = freqs.most_common(n_words) # only process top n words
-    print(top_words)
+
     words = [word for word, _ in top_words] # keep only words
     counts = [count for _, count in top_words] # keep only frequencies
 
@@ -50,6 +50,22 @@ def plot_most_frequent_words_from_dict(freqs, n_words=100):
     plt.bar(words, counts)
     plt.xticks(rotation=90)
     plt.xlabel("Words")
+    plt.ylabel("Frequency")
+    plt.title(f"Top {n_words} Most Frequent Words")
+    plt.tight_layout()
+    plt.show()
+
+# plot word rank and frequency. Usable for showing many word frequencies
+def plot_most_frequent_words(freqs, n_words=10000):
+    top_words = freqs.most_common(n_words)
+
+    counts = [count for _, count in top_words] # only keep frequency
+
+    plt.figure(figsize=(12, 6))
+    plt.plot(range(1, len(counts) + 1), counts) #plot rank (rank1 = most frequent word) and frequency
+    plt.xscale("log")
+    plt.yscale("log")
+    plt.xlabel("Rank")
     plt.ylabel("Frequency")
     plt.title(f"Top {n_words} Most Frequent Words")
     plt.tight_layout()
@@ -87,8 +103,8 @@ def main():
 
     dictionary_tokenized = build_dictionary(df["token_without_stopwords"])
     dictionary_stemmed = build_dictionary(df["stemmed_text"])
-    dictionary_non_tokenized = set(word for row in df["cleaned_text"] for word in row.split())
-    plot_most_frequent_words_from_dict(dictionary_tokenized)
+    dictionary_non_tokenized = (word for row in df["cleaned_text"] for word in row.split())
+    plot_most_frequent_words(dictionary_tokenized)
 
     print("Dictionary size of tokenized and stopwords removed:", len(dictionary_tokenized))
     print("dictionary size of nontokenized and no stopword removal:", len(dictionary_non_tokenized))

@@ -1,13 +1,18 @@
 import pandas as pd
 import Clean as clean
+from collections import Counter
+import os
 
-dictionary_tokenized = set()
-dictionary_stemmed = set()
-dictionary_non_tokenized = set()
+dictionary_tokenized = Counter()
+dictionary_stemmed = Counter()
+dictionary_non_tokenized = Counter()
 
+max_chunks = 2
 # creates
-for chunk in pd.read_csv("995,000_rows.csv", chunksize=100000):
-    
+for i, chunk in enumerate(pd.read_csv("995,000_rows.csv", chunksize=100000)):
+    if i >= max_chunks:
+        break
+
     # process single chunk
     chunk = clean.data_pipeline(chunk)
     
@@ -21,9 +26,16 @@ for chunk in pd.read_csv("995,000_rows.csv", chunksize=100000):
     )
     
     dictionary_non_tokenized.update(
-        set(word for row in chunk["cleaned_text"] for word in row.split())
+        word for row in chunk["cleaned_text"] for word in row.split()
     )
-    # chunk data is not joined together for now, only dictionaries are
+
+    chunk.to_csv(
+        "processed_data.csv",
+        mode="a",
+        index=False,
+        header=(i == 0)
+    )
+    # chunk data is not joined together in memory, but saved on disk as a csv file
 
 
 print("Dictionary size of tokenized and stopwords removed:", len(dictionary_tokenized))
@@ -32,6 +44,7 @@ print("Size reduction:", len(dictionary_non_tokenized) - len(dictionary_tokenize
 print("Dictionary size after stemming:", len(dictionary_stemmed))
 print("Reduction rate after stemming:",
     100 - (len(dictionary_stemmed) / len(dictionary_tokenized) * 100))
+clean.plot_most_frequent_words(dictionary_tokenized)
 
 '''
 Output when run:
