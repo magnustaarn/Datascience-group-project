@@ -25,4 +25,4 @@ top100words = dictionary_tokenized.most_common(100)
 for word, count in top100words:
   print(word, count)
 
-clean.plot_most_frequent_words(dictionary_tokenized)
+clean.plot_most_frequent_words_from_dict(dictionary_tokenized, 100)
