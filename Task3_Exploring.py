@@ -3,7 +3,7 @@ from collections import Counter
 import matplotlib.pyplot as plt
 import Clean as clean
 
-df = pd.read_csv("995,000_rows.csv")
+df = pd.read_csv("processed_data.csv")
 
 df = clean.data_pipeline(df)
 
