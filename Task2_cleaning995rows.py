@@ -31,7 +31,7 @@ for i, chunk in enumerate(pd.read_csv("995,000_rows.csv", chunksize=100000)):
         word for row in chunk["cleaned_text"] for word in row.split()
     )
 
-    chunk[["content", "type", "label", "stemmed_text"]].to_csv(
+    chunk[["content", "type", "stemmed_text"]].to_csv(
         "processed_data.csv",
         mode="a",
         index=False,
