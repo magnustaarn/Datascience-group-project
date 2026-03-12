@@ -7,6 +7,17 @@ dictionary_tokenized = Counter()
 dictionary_stemmed = Counter()
 dictionary_non_tokenized = Counter()
 
+# delete processed_data.csv if it exists
+if os.path.exists("processed_data.csv"):
+    os.remove("processed_data.csv")
+
+#defines news type as either relaible or not. creates new "label"
+def map_label(x):
+    if x == "reliable":
+        return 1
+    elif x in ["fake", "bias", "conspiracy", "satire", "junksci", "hate", "clickbait", "political"]:
+        return 0
+    return None
 # max chunks to be processed. makes it easier to test
 max_chunks = 2
 
@@ -14,10 +25,19 @@ max_chunks = 2
 for i, chunk in enumerate(pd.read_csv("995,000_rows.csv", chunksize=100000)):
     if max_chunks is not None and i >= max_chunks:
         break
-
+    
     # process single chunk
     chunk = clean.data_pipeline(chunk)
+
+    # creates "label"
+    chunk["label"] = chunk["type"].apply(map_label)
+
+    # remove rows where label could not be assigned
+    chunk = chunk.dropna(subset=["label"])
     
+    # remove rows where label could not be assigned
+    chunk = chunk.dropna(subset=["label"])
+
     # update dictionaries for processed chunk by adding the dictionaries of chunks together
     dictionary_tokenized.update(
         clean.build_dictionary(chunk["token_without_stopwords"])
@@ -31,7 +51,12 @@ for i, chunk in enumerate(pd.read_csv("995,000_rows.csv", chunksize=100000)):
         word for row in chunk["cleaned_text"] for word in row.split()
     )
 
-    chunk[["content", "type", "stemmed_text"]].to_csv(
+    # convert stemmed text to plain text string
+    chunk["stemmed_text"] = chunk["stemmed_text"].apply(
+        lambda x: " ".join(x) if isinstance(x, list) else str(x)
+    )
+
+    chunk[["content", "type", "label", "stemmed_text"]].to_csv(
         "processed_data.csv",
         mode="a",
         index=False,
