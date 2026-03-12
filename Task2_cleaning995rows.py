@@ -7,7 +7,9 @@ dictionary_tokenized = Counter()
 dictionary_stemmed = Counter()
 dictionary_non_tokenized = Counter()
 
+# max chunks to be processed. makes it easier to test
 max_chunks = 2
+
 # creates
 for i, chunk in enumerate(pd.read_csv("995,000_rows.csv", chunksize=100000)):
     if i >= max_chunks:
@@ -29,7 +31,7 @@ for i, chunk in enumerate(pd.read_csv("995,000_rows.csv", chunksize=100000)):
         word for row in chunk["cleaned_text"] for word in row.split()
     )
 
-    chunk.to_csv(
+    chunk[["tokenized_text"]].to_csv(
         "processed_data.csv",
         mode="a",
         index=False,
