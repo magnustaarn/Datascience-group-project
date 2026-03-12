@@ -12,7 +12,7 @@ max_chunks = 2
 
 # creates
 for i, chunk in enumerate(pd.read_csv("995,000_rows.csv", chunksize=100000)):
-    if max_chunks is not None & i >= max_chunks:
+    if max_chunks is not None and i >= max_chunks:
         break
 
     # process single chunk
