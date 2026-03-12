@@ -100,6 +100,9 @@ def main():
     df = pd.read_csv("news_sample.csv")
 
     df = data_pipeline(df)
+    print(df.columns)
+    print(df.head())
+    print(df.info())
 
     dictionary_tokenized = build_dictionary(df["token_without_stopwords"])
     dictionary_stemmed = build_dictionary(df["stemmed_text"])
