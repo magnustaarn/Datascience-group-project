@@ -20,7 +20,7 @@ df_test = df_test.dropna(subset=["content","label"])
 
 #TF-IDF Vectorizer
 vectorizer = TfidfVectorizer(
-  max_features = 20000,
+  max_features = 20000, #Eller 10000?
   ngram_range = (1,2),
   min_df = 5,
   max_df = 0.8,
