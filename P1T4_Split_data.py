@@ -12,14 +12,19 @@ for i, chunk in enumerate(pd.read_csv("processed_data.csv", chunksize=100000)):
         continue
     # first split: 80% train, 20% temp
     train_chunk, temp_chunk = train_test_split(
-        chunk, test_size=0.2
+        chunk,
+        test_size=0.2,
+        random_state=42
     )
 
     # second split: split temp into 10% validation, 10% test
     validation_chunk, test_chunk = train_test_split(
-        temp_chunk, test_size=0.5
+        temp_chunk, 
+        test_size=0.5,
+        random_state=42
     )
 
     train_chunk.to_csv("train.csv", mode="a", index=False, header=(i == 0))
     validation_chunk.to_csv("validation.csv", mode="a", index=False, header=(i == 0))
     test_chunk.to_csv("test.csv", mode="a", index=False, header=(i == 0))
+print("saved train data as train.csv\nsaved validation data as validation.csv\nsaved test data as test.csv")

@@ -1,8 +1,7 @@
 import pandas as pd
-import Clean as clean
+import P1T1_Cleaning as clean
 from collections import Counter
 import os
-import matplotlib.pyplot as plt
 
 dictionary_tokenized = Counter()
 dictionary_stemmed = Counter()
@@ -19,8 +18,8 @@ def map_label(x):
     elif x in ["fake", "bias", "conspiracy", "satire", "junksci", "hate", "clickbait", "political"]:
         return 0
     return None
-# max chunks to be processed. makes it easier to test
-max_chunks = 2
+# max chunks to be processed.
+max_chunks = None
 
 # creates
 for i, chunk in enumerate(pd.read_csv("995,000_rows.csv", chunksize=100000)):
@@ -33,9 +32,6 @@ for i, chunk in enumerate(pd.read_csv("995,000_rows.csv", chunksize=100000)):
     # creates "label"
     chunk["label"] = chunk["type"].apply(map_label)
 
-    # remove rows where label could not be assigned
-    chunk = chunk.dropna(subset=["label"])
-    
     # remove rows where label could not be assigned
     chunk = chunk.dropna(subset=["label"])
 
@@ -85,9 +81,10 @@ print("Dictionaries saved as dictionaries.pkl")
 
 '''
 Output when run:
-Dictionary size of tokenized and stopwords removed: 2120425
-dictionary size of nontokenized and no stopword removal: 2817928
-Size reduction: 697503
-Dictionary size after stemming: 1862236
-Reduction rate after stemming: 12.176285414480589 (a bit low?)
+Dictionary size of tokenized and stopwords removed: 2002863
+dictionary size of nontokenized and no stopword removal: 2166138
+Size reduction: 163275
+Dictionary size after stemming: 1765207
+Reduction rate after stemming: 11.865814087134268
+Dictionaries saved as dictionaries.pkl
 '''

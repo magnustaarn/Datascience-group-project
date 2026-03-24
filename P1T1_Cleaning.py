@@ -23,7 +23,6 @@ def clean_text(text):
 def tokenize(text):
     return word_tokenize(text)
 
-
 # removes stopwords
 dff = pd.read_csv("englishST.txt", header=None, names=["stopword"])
 stopwords = set(dff["stopword"])
@@ -114,4 +113,3 @@ def main():
 # only runs main() if file ran directly (this file usable as module)
 if __name__ == "__main__":
     main()
-

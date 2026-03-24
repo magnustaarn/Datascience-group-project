@@ -1,7 +1,7 @@
 import pandas as pd
 from collections import Counter
 import matplotlib.pyplot as plt
-import Clean as clean
+import P1T1_Cleaning as clean
 
 dict_tokenized = Counter()
 dict_stemmed = Counter()

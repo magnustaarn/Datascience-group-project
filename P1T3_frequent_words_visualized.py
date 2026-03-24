@@ -1,7 +1,7 @@
 import pickle
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
-import Clean as clean
+import P1T1_Cleaning as clean
 
 # Load the saved dictionaries
 with open('dictionaries.pkl', 'rb') as f:
