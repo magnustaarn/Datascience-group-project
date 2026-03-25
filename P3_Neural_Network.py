@@ -3,6 +3,7 @@ from sklearn.neural_network import MLPClassifier
 from sklearn.metrics import classification_report
 import pandas as pd
 import json
+import joblib
 
 # load train.csv & validation.csv
 print("Loading data...")
@@ -52,3 +53,8 @@ print(f"Model saved as {model_name}.json")
 print("Evaluating on validation set...")
 y_pred = mlp.predict(X_val)
 print(classification_report(df_val['label'], y_pred))
+
+joblib.dump(mlp, "trained_mlp_model.pkl") # save final model
+joblib.dump(tfidf, "tfidf_vectorizer.pkl") # save TF-IDF vectorizer
+
+print("Model & Vectorizer saved as .pkl files")
