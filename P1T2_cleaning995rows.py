@@ -53,7 +53,15 @@ for i, chunk in enumerate(pd.read_csv("995,000_rows.csv", chunksize=100000)):
         lambda x: " ".join(x) if isinstance(x, list) else str(x)
     )
 
-    chunk[["content", "type", "label", "stemmed_text"]].to_csv(
+    columns_to_exclude = [
+        "content",
+        "cleaned_text",
+        "tokenized_text",
+        "token_without_stopwords"
+    ]
+    chunk_to_save = chunk.drop(columns=columns_to_exclude, errors="ignore")
+
+    chunk_to_save.to_csv(
         "processed_data.csv",
         mode="a",
         index=False,
