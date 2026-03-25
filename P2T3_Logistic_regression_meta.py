@@ -5,8 +5,7 @@ from sklearn.impute import SimpleImputer
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import f1_score, classification_report
 from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import OneHotEncoder, FunctionTransformer, StandardScaler
-
+from sklearn.preprocessing import StandardScaler
 
 df_train = pd.read_csv("train.csv")
 df_test = pd.read_csv("test.csv")
@@ -15,7 +14,6 @@ df_test = pd.read_csv("test.csv")
 required_cols = ["stemmed_text", "label"]
 df_train = df_train.dropna(subset=required_cols).copy()
 df_test = df_test.dropna(subset=required_cols).copy()
-
 
 # If column does not exist, fill with empty string
 text_meta_cols = ["title", "summary", "meta_description", "authors"]
@@ -64,17 +62,29 @@ y_train = df_train["label"]
 X_test = df_test[feature_cols]
 y_test = df_test["label"]
 
-
 # Text columns which use bag of words conversion
-text_features = [
-    ("stemmed_text_bow", CountVectorizer(max_features=10000), "stemmed_text"), # max 10.000 dict size
-    ("title_bow", CountVectorizer(max_features=3000), "title"), # max 3.000 dict size
-    ("summary_bow", CountVectorizer(max_features=3000), "summary"), # max 3.000 dict size
-    ("meta_desc_bow", CountVectorizer(max_features=3000), "meta_description"), # max 3.000 dict size
-    ("authors_bow", CountVectorizer(max_features=1000), "authors"), # max 1.000 dict size
+text_features = []
+
+candidate_text_cols = [
+    ("stemmed_text_bow", "stemmed_text", 10000),
+    ("title_bow", "title", 3000),
+    ("summary_bow", "summary", 3000),
+    ("meta_desc_bow", "meta_description", 3000),
+    ("authors_bow", "authors", 1000),
 ]
 
-# Numeric metadata 
+for name, col, max_feat in candidate_text_cols:
+    if col in df_train.columns:
+        s = df_train[col].fillna("").astype(str)
+
+        # only include column if it has usable words
+        if s.str.contains(r"[A-Za-z]{2,}", regex=True).sum() > 0:
+            text_features.append((name, CountVectorizer(max_features=max_feat), col))
+            print(f"Included text feature: {col}")
+        else:
+            print(f"Skipped text feature: {col} (no usable vocabulary)")
+
+# Numeric metadata
 numeric_features = [
     "scraped_at_year",
     "scraped_at_month",
@@ -84,13 +94,13 @@ numeric_features = [
     "updated_at_month",
 ]
 
-# numeric transformer
+# Numeric transformer
 numeric_transformer = Pipeline([
-    ("imputer", SimpleImputer(strategy="most_frequent")), # fill missing values
-    ("scaler", StandardScaler()) # standerdises features (None of the features should be significantly higher)
+    ("imputer", SimpleImputer(strategy="most_frequent")),  # fill missing values
+    ("scaler", StandardScaler())  # standardize features
 ])
 
-# 
+# Combine text and numeric preprocessing
 preprocessor = ColumnTransformer(
     transformers=text_features + [
         ("num", numeric_transformer, numeric_features)
@@ -104,10 +114,8 @@ model = Pipeline([
     ("classifier", LogisticRegression(max_iter=1000))
 ])
 
-
 model.fit(X_train, y_train)
 y_pred = model.predict(X_test)
 
-
-print("F1 score:", f1_score(y_test, y_pred))
+print("F1 score:", f1_score(y_test, y_pred, average="binary"))
 print(classification_report(y_test, y_pred))
