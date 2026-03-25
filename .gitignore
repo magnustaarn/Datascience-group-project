@@ -4,3 +4,10 @@ __pycache__/
 
 # Data files
 *.csv
+
+# Models & Vectorizers results
+*.pkl
+
+# LIAR dataset
+*.tsv
+*.zip
