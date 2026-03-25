@@ -4,3 +4,6 @@ __pycache__/
 
 # Data files
 *.csv
+
+# Models & Vectorizers results
+*.pkl
