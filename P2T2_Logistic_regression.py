@@ -2,6 +2,7 @@ import pandas as pd
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import f1_score, classification_report
+import joblib
 
 df_train = pd.read_csv("train.csv")
 df_train = df_train.dropna(subset=["stemmed_text", "label"])# keep only rows with both text and label
@@ -24,3 +25,8 @@ model.fit(X_train_vec, y_train)
 y_pred = model.predict(X_test_vec)
 print("F1 score:", f1_score(y_test, y_pred))
 print(classification_report(y_test, y_pred))
+
+# save model and vectorizer
+joblib.dump(model, "simple_log_model.pkl")
+joblib.dump(vectorizer, "simple_count_vectorizer.pkl")
+print("Logistic model and vectorizer saved as .pkl files")
