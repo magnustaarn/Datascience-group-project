@@ -1,8 +1,6 @@
 # Fake News Data Science Project
 This repository contains our exam project on fake news detection. The project uses text and meta data from news articles to train models that classify articles as fake news or not.
 
-# Usage
-
 ## Used libraries:
 Pandas
 
