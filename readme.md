@@ -5,8 +5,11 @@ This repository contains our exam project on fake news detection. The project us
 
 ## Used libraries:
 Pandas
+
 nltk
+
 matplotlib
+
 sklearn
 
 use the following command to install the used libraries:
