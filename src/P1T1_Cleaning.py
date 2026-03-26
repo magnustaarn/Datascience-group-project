@@ -5,6 +5,7 @@ from nltk.tokenize import word_tokenize
 from nltk.stem import SnowballStemmer
 from collections import Counter
 import matplotlib.pyplot as plt
+import os
 
 def clean_text(text):
     text = str(text)
@@ -25,7 +26,9 @@ def tokenize(text):
     return word_tokenize(text)
 
 # removes stopwords
-dff = pd.read_csv("englishST.txt", header=None, names=["stopword"])
+base_dir = os.path.dirname(os.path.abspath(__file__))
+stopword_path = os.path.join(base_dir, "..", "Data", "englishST.txt")
+dff = pd.read_csv(stopword_path, header=None, names=["stopword"])
 stopwords = set(dff["stopword"])
 def remove_stopwords(token, stopwords):
     return [w for w in token if w not in stopwords]
@@ -95,21 +98,26 @@ def data_pipeline_stemmed(df):
 # data processing of news_sample.csv
 def main():
     df = pd.read_csv(DATA_DIR / "news_sample.csv")
-
     df = data_pipeline(df)
 
-    dictionary_tokenized = build_dictionary(df["token_without_stopwords"])
-    dictionary_stemmed = build_dictionary(df["stemmed_text"])
-    dictionary_non_tokenized = (word for row in df["cleaned_text"] for word in row.split())
-    plot_most_frequent_words(dictionary_tokenized)
+    vocab_raw = build_dictionary(df["tokenized_text"])
+    size_raw = len(vocab_raw)
+    vocab_no_stop = build_dictionary(df["token_without_stopwords"])
+    size_no_stop = len(vocab_no_stop)
+    vocab_stemmed = build_dictionary(df["stemmed_text"])
+    size_stemmed = len(vocab_stemmed)
+    reduction_stop = 100 - (size_no_stop / size_raw * 100)
+    reduction_stem = 100 - (size_stemmed / size_no_stop * 100)
 
-    print("Dictionary size of tokenized and stopwords removed:", len(dictionary_tokenized))
-    print("dictionary size of nontokenized and no stopword removal:", len(dictionary_non_tokenized))
-    print("Size reduction:", len(dictionary_non_tokenized) - len(dictionary_tokenized))
-    print("Dictionary size after stemming:", len(dictionary_stemmed))
-    print("Reduction rate after stemming:",
-        100 - (len(dictionary_stemmed) / len(dictionary_tokenized) * 100))
+    print(f"Original Vocab Size: {size_raw}")
+    print(f"Vocab after Stopwords: {size_no_stop} (Reduction: {reduction_stop:.2f}%)")
+    print(f"Vocab after Stemming: {size_stemmed} (Reduction: {reduction_stem:.2f}%)")
     
+def map_label(news_type):
+    if news_type == 'reliable':
+        return 1
+    else:
+        return 0
 
 # only runs main() if file ran directly (this file usable as module)
 if __name__ == "__main__":
