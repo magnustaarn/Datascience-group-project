@@ -2,9 +2,11 @@ import pickle
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 import P1T1_Cleaning as clean
+from paths import DATA_DIR
 
+dictionary_file = DATA_DIR / "dictionaries.pkl"
 # Load the saved dictionaries
-with open('dictionaries.pkl', 'rb') as f:
+with open(dictionary_file, 'rb') as f:
     data = pickle.load(f)
 
 dict_tokenized = data['tokenized']

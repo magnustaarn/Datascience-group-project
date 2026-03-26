@@ -6,9 +6,13 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import f1_score, classification_report
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
+from paths import DATA_DIR, OUTPUT_DIR
 
-df_train = pd.read_csv("train.csv")
-df_test = pd.read_csv("test.csv")
+train_file = DATA_DIR / "train.csv"
+test_file = DATA_DIR / "test.csv"
+
+df_train = pd.read_csv(train_file)
+df_test = pd.read_csv(test_file)
 
 # Keep rows with required target/text columns
 required_cols = ["stemmed_text", "label"]

@@ -1,5 +1,6 @@
 import re
 import pandas as pd
+from paths import DATA_DIR
 from nltk.tokenize import word_tokenize
 from nltk.stem import SnowballStemmer
 from collections import Counter
@@ -93,7 +94,7 @@ def data_pipeline_stemmed(df):
 
 # data processing of news_sample.csv
 def main():
-    df = pd.read_csv("news_sample.csv")
+    df = pd.read_csv(DATA_DIR / "news_sample.csv")
 
     df = data_pipeline(df)
 

@@ -2,12 +2,16 @@ import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.svm import LinearSVC
 from sklearn.metrics import f1_score, classification_report
+from paths import DATA_DIR
 
+train_file = DATA_DIR / "train.csv"
+test_file = DATA_DIR / "test.csv"
+val_file = DATA_DIR / "validation.csv"
 #Load train/val/test
 print("Loading data")
-df_train = pd.read_csv("train.csv", usecols=["stemmed_text", "label"])
-df_val = pd.read_csv("validation.csv", usecols=["stemmed_text", "label"])
-df_test = pd.read_csv("test.csv", usecols=["stemmed_text", "label"])
+df_train = pd.read_csv(train_file, usecols=["stemmed_text", "label"])
+df_val = pd.read_csv(val_file, usecols=["stemmed_text", "label"])
+df_test = pd.read_csv(test_file, usecols=["stemmed_text", "label"])
 
 
 #Remove NaN

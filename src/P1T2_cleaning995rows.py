@@ -1,16 +1,20 @@
 import pandas as pd
 import P1T1_Cleaning as clean
+from paths import DATA_DIR
 from collections import Counter
-import os
 
 dictionary_tokenized = Counter()
 dictionary_stemmed = Counter()
 dictionary_non_tokenized = Counter()
 
 # delete processed_data.csv if it exists
-if os.path.exists("processed_data.csv"):
-    os.remove("processed_data.csv")
+processed_file = DATA_DIR / "processed_data.csv"
+if processed_file.exists():
+    processed_file.unlink()
 
+input_file = DATA_DIR / "995,000_rows.csv"
+output_file = DATA_DIR / "processed_data.csv"
+dictionary_file = DATA_DIR / "dictionaries.pkl"
 #defines news type as either relaible or not. creates new "label"
 def map_label(x):
     if x == "reliable":
@@ -22,7 +26,7 @@ def map_label(x):
 max_chunks = None
 
 # creates
-for i, chunk in enumerate(pd.read_csv("995,000_rows.csv", chunksize=100000)):
+for i, chunk in enumerate(pd.read_csv(input_file, chunksize=100000)):
     if max_chunks is not None and i >= max_chunks:
         break
     
@@ -62,7 +66,7 @@ for i, chunk in enumerate(pd.read_csv("995,000_rows.csv", chunksize=100000)):
     chunk_to_save = chunk.drop(columns=columns_to_exclude, errors="ignore")
 
     chunk_to_save.to_csv(
-        "processed_data.csv",
+        output_file,
         mode="a",
         index=False,
         header=(i == 0)
@@ -79,7 +83,7 @@ print("Reduction rate after stemming:",
 import pickle
 
 #Save dictionaries
-with open('dictionaries.pkl', 'wb') as f:
+with open(dictionary_file, 'wb') as f:
     pickle.dump({
         'tokenized': dictionary_tokenized,
         'stemmed': dictionary_stemmed,

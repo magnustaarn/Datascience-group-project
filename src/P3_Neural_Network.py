@@ -4,11 +4,17 @@ from sklearn.metrics import classification_report
 import pandas as pd
 import json
 import joblib
+from paths import DATA_DIR, OUTPUT_DIR_LOSS
+
+train_file = DATA_DIR / "train.csv"
+val_file = DATA_DIR / "validation.csv"
+mlp_file = DATA_DIR / "trained_mlp_model.pkl"
+tfidf_file = DATA_DIR / "tfidf_vectorizer.pkl"
 
 # load train.csv & validation.csv
 print("Loading data...")
-df_train = pd.read_csv("train.csv", usecols=['stemmed_text', 'label'])
-df_val = pd.read_csv("validation.csv", usecols=['stemmed_text', 'label'])
+df_train = pd.read_csv(train_file, usecols=['stemmed_text', 'label'])
+df_val = pd.read_csv(val_file, usecols=['stemmed_text', 'label'])
 df_train = df_train.dropna(subset=['stemmed_text'])
 df_val = df_val.dropna(subset=['stemmed_text'])
 
@@ -44,7 +50,8 @@ mlp.fit(X_train, df_train['label'])
 model_name = f"loss_{h_layers}".replace(" ", "").replace(",", "_").replace("(", "").replace(")", "")
 
 # Save loss_curve_ as JSON file for graph
-with open(f"{model_name}.json", "w") as f:
+json_file = OUTPUT_DIR_LOSS / f"{model_name}.json"
+with open(json_file, "w") as f:
     json.dump(mlp.loss_curve_, f)
 
 print(f"Model saved as {model_name}.json")
@@ -54,7 +61,7 @@ print("Evaluating on validation set...")
 y_pred = mlp.predict(X_val)
 print(classification_report(df_val['label'], y_pred))
 
-joblib.dump(mlp, "trained_mlp_model.pkl") # save final model
-joblib.dump(tfidf, "tfidf_vectorizer.pkl") # save TF-IDF vectorizer
+joblib.dump(mlp, mlp_file) # save final model
+joblib.dump(tfidf, tfidf_file) # save TF-IDF vectorizer
 
 print("Model & Vectorizer saved as .pkl files")

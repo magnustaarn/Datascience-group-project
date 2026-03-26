@@ -1,13 +1,19 @@
 from sklearn.model_selection import train_test_split
 import pandas as pd
-import os
+from paths import DATA_DIR
 
 # delete files if they already exist
 for filename in ["train.csv", "validation.csv", "test.csv"]:
-    if os.path.exists(filename):
-        os.remove(filename)
+    file_path = DATA_DIR / filename
+    if file_path.exists():
+        file_path.unlink()
 
-for i, chunk in enumerate(pd.read_csv("processed_data.csv", chunksize=100000)):
+input_file = DATA_DIR / "processed_data.csv"
+train_file = DATA_DIR / "train.csv"
+test_file = DATA_DIR / "test.csv"
+val_file = DATA_DIR / "validation.csv"
+
+for i, chunk in enumerate(pd.read_csv(input_file, chunksize=100000)):
     if len(chunk) < 10:
         continue
     # first split: 80% train, 20% temp
@@ -24,7 +30,7 @@ for i, chunk in enumerate(pd.read_csv("processed_data.csv", chunksize=100000)):
         random_state=42
     )
 
-    train_chunk.to_csv("train.csv", mode="a", index=False, header=(i == 0))
-    validation_chunk.to_csv("validation.csv", mode="a", index=False, header=(i == 0))
-    test_chunk.to_csv("test.csv", mode="a", index=False, header=(i == 0))
+    train_chunk.to_csv(train_file, mode="a", index=False, header=(i == 0))
+    validation_chunk.to_csv(val_file, mode="a", index=False, header=(i == 0))
+    test_chunk.to_csv(test_file, mode="a", index=False, header=(i == 0))
 print("saved train data as train.csv\nsaved validation data as validation.csv\nsaved test data as test.csv")

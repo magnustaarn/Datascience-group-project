@@ -1,6 +1,7 @@
 import pandas as pd
 from collections import Counter
 import P1T1_Cleaning as clean
+from paths import DATA_DIR
 
 dict_tokenized = Counter()
 dict_stemmed = Counter()
@@ -15,8 +16,9 @@ count_reliable = 0
 total_len_fake = 0
 count_fake = 0
 
+input_file = DATA_DIR / "995,000_rows.csv"
 # processing in chunk - faster run time
-for chunk in pd.read_csv("995,000_rows.csv", chunksize=100000):
+for chunk in pd.read_csv(input_file, chunksize=100000):
     chunk = clean.data_pipeline(chunk)
     
     # update with data from chunk

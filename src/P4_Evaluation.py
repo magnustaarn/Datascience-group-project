@@ -3,17 +3,32 @@ import joblib
 import P1T1_Cleaning as clean # for cleaning LIAR - so the evaluation is fair against both datasets
 from sklearn.metrics import classification_report, ConfusionMatrixDisplay, f1_score
 import matplotlib.pyplot as plt
+from paths import DATA_DIR, OUTPUT_DIR_FIGURES
+
+# file paths
+mlp_file = DATA_DIR / "trained_mlp_model.pkl"
+tfidf_file = DATA_DIR / "tfidf_vectorizer.pkl"
+log_model_file = DATA_DIR / "simple_log_model.pkl"
+count_vec_file = DATA_DIR / "simple_count_vectorizer.pkl"
+
+test_file = DATA_DIR / "test.csv"
+liar_test_file = DATA_DIR / "LIAR_test.tsv"
+
+cm_fn_mlp_file = OUTPUT_DIR_FIGURES / "cm_fn_mlp.png"
+cm_fn_log_file = OUTPUT_DIR_FIGURES / "cm_fn_log.png"
+cm_liar_mlp_file = OUTPUT_DIR_FIGURES / "cm_liar_mlp.png"
+cm_liar_log_file = OUTPUT_DIR_FIGURES / "cm_liar_log.png"
 
 # loading models and vectorizations
 print("Loading models...")
-mlp = joblib.load("trained_mlp_model.pkl")
-tfidf = joblib.load("tfidf_vectorizer.pkl")
-log_model = joblib.load("simple_log_model.pkl")
-count_vec = joblib.load("simple_count_vectorizer.pkl")
+mlp = joblib.load(mlp_file)
+tfidf = joblib.load(tfidf_file)
+log_model = joblib.load(log_model_file)
+count_vec = joblib.load(count_vec_file)
 
 # FakeNewsCorpus dataset
 print("\nFakeNewsCorpus Evaluation")
-df_fn = pd.read_csv("test.csv").dropna(subset=['stemmed_text', 'label'])
+df_fn = pd.read_csv(test_file).dropna(subset=['stemmed_text', 'label'])
 
 X_fn_tfidf = tfidf.transform(df_fn['stemmed_text'])
 y_fn_pred_mlp = mlp.predict(X_fn_tfidf)
@@ -27,7 +42,7 @@ print("FakeNewsCorpus - Logistic result:\n", classification_report(df_fn['label'
 # LIAR dataset
 print("\nLIAR Dataset Evaluation")
 liar_cols = ['id', 'label', 'statement', 'subject', 'speaker', 'job', 'state', 'party', 'bt', 'f', 'ht', 'mt', 'pof', 'context']
-df_liar = pd.read_csv("LIAR_test.tsv", sep='\t', names=liar_cols, header=None)
+df_liar = pd.read_csv(liar_test_file, sep='\t', names=liar_cols, header=None)
 
 # MAP labels (0=Fake, 1=Reliable)
 label_map = {
@@ -59,10 +74,10 @@ def plot_cm(y_true, y_pred, title, filename):
     plt.savefig(filename)
     plt.show()
 
-plot_cm(df_fn['label'], y_fn_pred_mlp, "FakeNews - MLP", "cm_fn_mlp.png")
-plot_cm(df_fn['label'], y_fn_pred_log, "FakeNews - Logistic", "cm_fn_log.png")
-plot_cm(df_liar['binary_label'], y_liar_pred_mlp, "LIAR - MLP", "cm_liar_mlp.png")
-plot_cm(df_liar['binary_label'], y_liar_pred_log, "LIAR - Logistic", "cm_liar_log.png")
+plot_cm(df_fn['label'], y_fn_pred_mlp, "FakeNews - MLP", cm_fn_mlp_file)
+plot_cm(df_fn['label'], y_fn_pred_log, "FakeNews - Logistic", cm_fn_log_file)
+plot_cm(df_liar['binary_label'], y_liar_pred_mlp, "LIAR - MLP", cm_liar_mlp_file)
+plot_cm(df_liar['binary_label'], y_liar_pred_log, "LIAR - Logistic", cm_liar_log_file)
 print("\nsaved all confusion matrix models in directory")
 
 # Comparison

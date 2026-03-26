@@ -1,12 +1,13 @@
 import matplotlib.pyplot as plt
 import json
 import glob
+from paths import DATA_DIR
 
 colors = ['red', 'blue', 'green', 'darkorange', 'purple', 'brown']
 
 plt.figure(figsize=(10, 6))
 
-json_files = glob.glob("loss_*.json") #JSON files in directory starting with loss_
+json_files = glob.glob(str(DATA_DIR / "loss_*.json")) #JSON files in directory starting with loss_
 json_files.sort()
 
 if not json_files:
