@@ -16,6 +16,9 @@ clean.plot_most_frequent_words_from_dict(dict_tokenized, 30)
 plt.title("Top 30 Most Frequent Words (Tokenized)")
 plt.yscale('linear')
 plt.gca().yaxis.set_major_formatter(ticker.StrMethodFormatter('{x:,.0f}'))
+plt.tight_layout()
+plt.savefig("top_30_tokenized.png", bbox_inches='tight') # saving file in dict
+print("Saved top_30_tokenized.png")
 
 # top 30 most frequent words, stemmmed
 plt.figure(figsize=(12, 6))
@@ -23,5 +26,8 @@ clean.plot_most_frequent_words_from_dict(dict_stemmed, 30)
 plt.title("Top 30 Most Frequent Words (stemmed)")
 plt.yscale('linear')
 plt.gca().yaxis.set_major_formatter(ticker.StrMethodFormatter('{x:,.0f}'))
+plt.tight_layout()
+plt.savefig("top_30_stemmed.png", bbox_inches='tight') # saving file in dict
+print("Saved top_30_stemmed.png")
 
 plt.show()

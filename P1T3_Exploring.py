@@ -1,6 +1,5 @@
 import pandas as pd
 from collections import Counter
-import matplotlib.pyplot as plt
 import P1T1_Cleaning as clean
 
 dict_tokenized = Counter()
