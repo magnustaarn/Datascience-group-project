@@ -7,3 +7,7 @@ __pycache__/
 
 # Models & Vectorizers results
 *.pkl
+
+# LIAR dataset
+*.tsv
+*.zip
