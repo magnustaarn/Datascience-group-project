@@ -63,7 +63,7 @@ plot_cm(df_fn['label'], y_fn_pred_mlp, "FakeNews - MLP", "cm_fn_mlp.png")
 plot_cm(df_fn['label'], y_fn_pred_log, "FakeNews - Logistic", "cm_fn_log.png")
 plot_cm(df_liar['binary_label'], y_liar_pred_mlp, "LIAR - MLP", "cm_liar_mlp.png")
 plot_cm(df_liar['binary_label'], y_liar_pred_log, "LIAR - Logistic", "cm_liar_log.png")
-print("\nsaved all confusion models in directory")
+print("\nsaved all confusion matrix models in directory")
 
 # Comparison
 print("\nComparison")
